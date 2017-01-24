@@ -29,4 +29,48 @@
 	 * practising this, we should strive to set a better example in our own work.
 	 */
 
+	 $(function() {
+	 	var frame,
+	 	imgUploadButton = $('#upload_login_logo_button'),
+	 	imgContainer = $('#upload_logo_preview'),
+	 	imgIdInput = $('#upload_logo_id'),
+	 	imgPreview = $('#upload_logo_preview'),
+	 	imgDelButton = $('#wp_cbf-delete_logo_button'),
+	 	// color picker inputs
+	 	colorPickerInputs = $( '.wp-cbf-color-picker');
+
+	 	// wordpress specific plugins - color picker and image upload
+	 	$( '.wp-cbf-color-picker' ).wpColorPicker();
+
+	 	// wp.media and Image
+	 	imgUploadButton.on('click', function (event) {
+	 		event.preventDefault();
+
+	 		if (frame) {
+	 			frame.open();
+	 			return;
+	 		}
+	 		// create a new media frame
+	 		frame = wp.media({
+	 			title: 'Select or upload media for your login logo',
+	 			button: {
+	 				text: 'Use as my login page logo'
+	 			},
+	 			multiple: false,
+	 		});
+	 		frame.on('select', function () {
+	 			var attachment = frame.state().get('selection').first().toJSON();
+	 			imgPreview.find('img').attr('src', attachment.sizes.thumbnail.url);
+	 			imgIdInput.val(attachment.id);
+	 			imgPreview.removeClass('hidden');
+	 		});
+	 		frame.open();
+	 	});
+	 	imgDelButton.on('click', function (e) {
+	 		e.preventDefault();
+	 		imgIdInput.val('');
+	 		imgPreview.find('img').attr('src', '');
+	 		imgPreview.addClass('hidden');
+	 	});
+	 });
 })( jQuery );
